@@ -55,7 +55,7 @@ def create_composers_pdf(csv_file):
         
         
         filename = f"{id}_{nombre_artistico.replace(" ", "_")}.pdf"
-        save_name = os.path.join("compositores/", filename)
+        save_name = os.path.join("fimnme/compositores/", filename)
         
         c = canvas.Canvas(save_name, pagesize=letter)
         c.setFont("Helvetica-Bold", 40)                
@@ -247,18 +247,18 @@ def create_interpreters_pdf(csv_file):
         
         
         filename = f"{id}_{re.sub(r'[ /]', '_', nombre_artistico)}.pdf"
-        save_name = os.path.join("interpretes/", filename)
+        save_name = os.path.join("fimnme/interpretes/", filename)
         
         c = canvas.Canvas(save_name, pagesize=letter)
         
         # DATOS DEL INTERPRETE Y SEDE
         
-        c.setFont("Helvetica-Bold", 30)                
+        c.setFont("Helvetica-Bold", 20)                
         c.drawString(x, y, f"{id}. {nombre_artistico}")
         c.line(50, height - 70, 600, height - 70)        
         interlinea = 40
         
-        c.setFont("Helvetica-Bold", 20)         
+        c.setFont("Helvetica-Bold", 18)         
         c.drawString(x, y-interlinea, f"{estado}")
         interlinea += 25
         
@@ -368,10 +368,16 @@ def create_interpreters_pdf(csv_file):
         interlinea += 30
         c.setFont("Helvetica", 10)
         if pd.notna(nota):
-            lines3 = simpleSplit(nota, c._fontname, c._fontsize, max_width)
-            for line in lines3:
-                c.drawString(x, y-interlinea, line)
-                interlinea +=12
+            if len(nota) > 150:
+                lines3 = simpleSplit(nota, c._fontname, c._fontsize, max_width)
+                for line in lines3:
+                    c.drawString(x, y-interlinea, line)
+                    interlinea +=12
+            else:
+                c.setFillColor("blue")
+                c.drawString(x, y-interlinea, nota)
+                c.linkURL(nota, (x, y-interlinea, x + 200, y-interlinea + 10), relative=1)            
+                c.setFillColor("black") 
         interlinea +=10
 
         c.save()
