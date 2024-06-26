@@ -1,25 +1,23 @@
+import os
+import re
 import pandas as pd
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from datetime import datetime
 from reportlab.lib.utils import simpleSplit
 
-def create_pdf(csv_file):
+def create_composers_pdf(csv_file):
     df = pd.read_csv(csv_file)
-    
     
     width, height = letter
     
-    
-    
     x = 50
     y = height - 60
-    max_width = width - 2 * x
-    
+    max_width = width - 2 * x    
     
     for index, row in df.iterrows():
         
-        id = row["Id"]
+        id = row["ID"]
         email = row["Email de contacto"]
         telefono = row["Teléfono de contacto"]
         nombre_completo = row["Nombre completo"]
@@ -43,22 +41,23 @@ def create_pdf(csv_file):
         nota1 = row["Nota de programa"]
         partitura1 = row["Liga a partitura"]
         partichela1 = row["Liga a partichelas (en caso de ser necesario)"]
-        material1 = row["Liga a material digital o grabación de la obra (en caso de ser necesario)1"]
+        material1 = row["Liga a material digital o grabación de la obra (en caso de ser necesario)"]
         
-        titulo2 = row["Título de la obra1"]
-        estreno2 = row["¿Es estreno?1"]
-        duracion2 = row["Duración en minutos1"]
-        dotacion2 = row["Dotación instrumental1"]
-        # ano2 = row["Año de creación1"]
-        nota2 = row["Nota de programa1"]
-        partitura2 = row["Liga a partitura1"]
-        partichela2 = row["Liga a partichelas (en caso de ser necesario)1"]
-        material2 = row["Liga a material digital o grabación de la obra (en caso de ser necesario)"]
+        titulo2 = row["Título de la obra2"]
+        estreno2 = row["¿Es estreno?2"]
+        duracion2 = row["Duración en minutos2"]
+        dotacion2 = row["Dotación instrumental2"]
+        ano2 = row["Año de creación3"]
+        nota2 = row["Nota de programa2"]
+        partitura2 = row["Liga a partitura2"]
+        partichela2 = row["Liga a partichelas (en caso de ser necesario)2"]
+        material2 = row["Liga a material digital o grabación de la obra (en caso de ser necesario)3"]
         
         
-        filename = f"{id}_{nombre_completo.replace(" ", "_")}.pdf"
+        filename = f"{id}_{nombre_artistico.replace(" ", "_")}.pdf"
+        save_name = os.path.join("compositores/", filename)
         
-        c = canvas.Canvas(filename, pagesize=letter)
+        c = canvas.Canvas(save_name, pagesize=letter)
         c.setFont("Helvetica-Bold", 40)                
         c.drawString(x, y, f"{id}. {nombre_artistico}")
         c.line(50, height - 70, 600, height - 70)
@@ -105,7 +104,13 @@ def create_pdf(csv_file):
         interlinea += 12
         c.drawString(x, y-interlinea, f"Duración en minutos: {duracion1}   |   ¿Estreno?: {estreno1}   |   Año de creación: {ano1}")
         interlinea += 12
-        c.drawString(x, y-interlinea, f"Dotación instrumental: {dotacion1}")
+        c.drawString(x, y-interlinea, f"Dotación instrumental:")
+        interlinea +=10
+        if pd.notna(dotacion1):
+            lines7 = simpleSplit(dotacion1, c._fontname, c._fontsize, max_width)
+            for line in lines7:
+                c.drawString(x, y-interlinea, line)
+                interlinea +=10
         interlinea += 20
         
         c.setFont("Helvetica-Bold", 10)
@@ -156,7 +161,13 @@ def create_pdf(csv_file):
             interlinea += 12
             c.drawString(x, y-interlinea, f"Duración en minutos: {duracion2}   |   ¿Estreno?: {estreno2}")
             interlinea += 12
-            c.drawString(x, y-interlinea, f"Dotación instrumental: {dotacion2}")
+            c.drawString(x, y-interlinea, f"Dotación instrumental:")
+            interlinea +=10
+            if pd.notna(dotacion2):
+                lines6 = simpleSplit(dotacion2, c._fontname, c._fontsize, max_width)
+                for line in lines6:
+                    c.drawString(x, y-interlinea, line)
+                    interlinea +=10
             interlinea += 20
             
             c.setFont("Helvetica-Bold", 10)
@@ -183,7 +194,7 @@ def create_pdf(csv_file):
             c.setFillColor("black")
             c.drawString(x, y-interlinea, f"Liga a partichelas:")
             interlinea += 12
-            if pd.notna(partichela1):           
+            if pd.notna(partichela2):           
                 c.setFillColor("blue")
                 c.drawString(x, y-interlinea, partichela2)
                 c.linkURL(partichela2, (x, y-interlinea, x + 200, y-interlinea + 10), relative=1)            
@@ -195,15 +206,176 @@ def create_pdf(csv_file):
             if pd.notna(material2):
                 c.setFillColor("blue")
                 c.drawString(x, y-interlinea, material1)
-                c.linkURL(material1, (x, y-interlinea, x + 200, y-interlinea + 10), relative=1)
-        
-        
-        
-        
-        
+                c.linkURL(material1, (x, y-interlinea, x + 200, y-interlinea + 10), relative=1)     
+
         c.save()
+
+def create_interpreters_pdf(csv_file):
+    df = pd.read_csv(csv_file)
     
+    width, height = letter
     
+    x = 50
+    y = height - 60
+    max_width = width - 2 * x    
     
-create_pdf("data.csv")
+    for index, row in df.iterrows():
+        
+        id = row["ID"]
+        email = row["Email de contacto"]
+        telefono = row["Teléfono de contacto"]
+        nombre_completo = row["Nombre completo de la persona responsable"]
+        nombre_artistico = row["Nombre artístico del intérprete o ensamble"]
+        
+        dotacion = row["Dotación instrumental"]
+        ciudad_residencia = row["Ciudad de residencia actual"]                
+        semblanza = row["Semblanza breve"]
+        foto = row["Liga a fotografía"]
+        
+        programa = row["Programa propuesto"]        
+        partituras = row["Liga a partituras"]
+        nota = row["Nota de programa de cada obra propuesta"]
+        carta = row["Liga a carta de consentimiento (revisar convocatoria)"]
+        material = row["Liga a materiales digitales o audios de las obras (sólo en caso de ser necesario)"]
+        requerimientos = row["Requerimientos técnicos"]
+        
+        estado = row["Estado de la república donde se realizará el concierto"]
+        sede = row["Sede donde se realizará el concierto"]
+        fecha = row["Fecha del concierto"]
+        hora = row["Hora del concierto"]
+        liga = row["Liga a carta de aceptación de la sede"]
+        
+        
+        filename = f"{id}_{re.sub(r'[ /]', '_', nombre_artistico)}.pdf"
+        save_name = os.path.join("interpretes/", filename)
+        
+        c = canvas.Canvas(save_name, pagesize=letter)
+        
+        # DATOS DEL INTERPRETE Y SEDE
+        
+        c.setFont("Helvetica-Bold", 30)                
+        c.drawString(x, y, f"{id}. {nombre_artistico}")
+        c.line(50, height - 70, 600, height - 70)        
+        interlinea = 40
+        
+        c.setFont("Helvetica-Bold", 20)         
+        c.drawString(x, y-interlinea, f"{estado}")
+        interlinea += 25
+        
+        c.setFont("Helvetica", 10)
+        c.drawString(x, y-interlinea, f"Dotación instrumental: {dotacion}")
+        interlinea += 12
+        c.drawString(x, y-interlinea, f"Nombre completo: {nombre_completo}")
+        interlinea += 12
+        c.drawString(x, y-interlinea, f"Email: {email}   |   Teléfono: {telefono}")
+        interlinea += 12        
+        c.drawString(x, y-interlinea, f"Ciudad de residencia: {ciudad_residencia}")
+        interlinea += 20
+        
+        c.setFont("Helvetica-Bold", 10)
+        c.drawString(x, y-interlinea, f"Semblanza breve:")
+        interlinea += 20        
+        c.setFont("Helvetica", 10)
+        lines = simpleSplit(semblanza, c._fontname, c._fontsize, max_width)
+        for line in lines:
+            c.drawString(x, y-interlinea, line)
+            interlinea +=10
+        interlinea +=10
+            
+        
+        c.drawString(x, y-interlinea, f"Liga a fotografía:")
+        interlinea += 12
+        c.setFillColor("blue")
+        c.drawString(x, y-interlinea, foto)
+        c.linkURL(foto, (x, y-interlinea, x + 200, y-interlinea + 10), relative=1)
+        
+        if pd.notna(sede):
+            interlinea +=20
+            c.setFont("Helvetica-Bold", 25)
+            c.setFillColor("black")
+            c.drawString(x, y-interlinea, f"Datos del concierto")
+            interlinea += 20
+            
+            c.setFont("Helvetica", 10)
+            c.drawString(x, y-interlinea, f"Sede donde se realizará el concierto: {sede}")
+            interlinea += 12
+            c.drawString(x, y-interlinea, f"Fecha del concierto: {fecha}   |   Hora del concierto: {hora}")
+            interlinea += 12
+            
+            c.drawString(x, y-interlinea, f"Liga a carta de aceptación:")
+            interlinea += 12
+            c.setFillColor("blue")
+            c.drawString(x, y-interlinea, liga)
+            c.linkURL(liga, (x, y-interlinea, x + 200, y-interlinea + 10), relative=1)
+        
+        
+        
+        # PROGRAMA
+        c.showPage()
+        interlinea = 20
+        c.setFont("Helvetica-Bold", 25)
+        c.setFillColor("black")
+        c.drawString(x, y-interlinea, f"Programa propuesto")
+        interlinea += 30
+        c.setFont("Helvetica", 10)
+        lines2 = simpleSplit(programa, c._fontname, c._fontsize, max_width)
+        for line in lines2:
+            c.drawString(x, y-interlinea, line)
+            interlinea +=10
+        interlinea +=20
+       
+        c.setFont("Helvetica-Bold", 15) 
+        c.drawString(x, y-interlinea, f"Requerimientos técnicos")
+        interlinea += 15
+        c.setFont("Helvetica", 10)
+        lines5 = simpleSplit(requerimientos, c._fontname, c._fontsize, max_width)
+        for line in lines5:
+            c.drawString(x, y-interlinea, line)
+            interlinea +=12
+        interlinea +=10
+        
+        c.drawString(x, y-interlinea, f"Liga a partituras:")
+        interlinea += 12
+        c.setFillColor("blue")
+        c.drawString(x, y-interlinea, partituras)
+        c.linkURL(partituras, (x, y-interlinea, x + 200, y-interlinea + 10), relative=1)
+        interlinea += 20        
+        c.setFillColor("black")   
+             
+        if pd.notna(carta):
+            c.drawString(x, y-interlinea, f"Liga a carta de consentimiento:")
+            interlinea += 12           
+            c.setFillColor("blue")
+            c.drawString(x, y-interlinea, carta)
+            c.linkURL(carta, (x, y-interlinea, x + 200, y-interlinea + 10), relative=1)            
+            c.setFillColor("black")
+            interlinea += 20
+            
+        c.drawString(x, y-interlinea, f"Liga a materiales digitales o audios:")
+        interlinea += 12
+        if pd.notna(material):           
+            c.setFillColor("blue")
+            c.drawString(x, y-interlinea, material)
+            c.linkURL(material, (x, y-interlinea, x + 200, y-interlinea + 10), relative=1)            
+            c.setFillColor("black") 
+        
+        # NOTAS DE PROGRAMA
+        c.showPage()
+        interlinea = 20
+        c.setFont("Helvetica-Bold", 25)
+        c.setFillColor("black")
+        c.drawString(x, y-interlinea, f"Notas de programa de cada obra propuesta")
+        interlinea += 30
+        c.setFont("Helvetica", 10)
+        if pd.notna(nota):
+            lines3 = simpleSplit(nota, c._fontname, c._fontsize, max_width)
+            for line in lines3:
+                c.drawString(x, y-interlinea, line)
+                interlinea +=12
+        interlinea +=10
+
+        c.save()
+
+create_composers_pdf("comp.csv")
+create_interpreters_pdf("inter.csv")
         
